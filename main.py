@@ -13,6 +13,11 @@ def main(page: ft.Page):
     page.padding = 0
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
+    
+    # ====== إعدادات حجم النافذة للجوال ======
+    page.window_width = 380
+    page.window_height = 780
+    page.window_resizable = False
 
     sections_data = {
         "الحروف والكتابة | Letters & Writing 📚": [
@@ -205,8 +210,7 @@ def main(page: ft.Page):
         header,
         grid_container,
         display_container,
-        ft.Divider(height=5),
-        ft.Container(content=chat, height=120, padding=5, bgcolor="#FAFAFA", border_radius=10),
+        ft.Container(content=chat, expand=True, padding=5, bgcolor="#FAFAFA", border_radius=10),
         ft.Row([field, send_btn], spacing=8)
     ], expand=True, spacing=8)
 
