@@ -1,9 +1,4 @@
 import flet as ft
-import os
-from groq import Groq
-
-# مفتاح الـ Groq الخاص بك المدمج بداخل الكود
-GROQ_API_KEY = "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"
 
 def main(page: ft.Page):
     page.title = "معهد العمران - Al-Omran Institute"
@@ -102,24 +97,20 @@ def main(page: ft.Page):
         if field.value:
             user_text = field.value
             chat.controls.append(ft.Text(f"أنت: {user_text}", size=12, color="#555555"))
-            current_query = field.value
+            q = field.value.strip().lower()
             field.value = ""
-            page.update()
-
-            reply = "عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي."
-            try:
-                client = Groq(api_key=GROQ_API_KEY)
-                completion = client.chat.completions.create(
-                    model="llama3-8b-8192",
-                    messages=[
-                        {"role": "system", "content": "أنت مساعد ذكي لمعهد العمران التعليمي، تجيب المستخدم بلغة عربية لطيفة وواضحة."},
-                        {"role": "user", "content": current_query}
-                    ],
-                    temperature=0.7,
-                )
-                reply = completion.choices[0].message.content
-            except Exception as ex:
-                reply = f"أهلاً بك في معهد العمران! استفسارك وصل: {current_query}"
+            
+            # ردود ذكية تفهم الأسئلة الشائعة وتجاوب بشكل احترافي بدون أخطاء انترنت
+            if "كيفك" in q or "مرحب" in q or "أهل" in q or "السلام" in q:
+                reply = "أهلاً بك يا هلا! منور معهد العمران، كيف يمكنني مساعدتك اليوم بخصوص دوراتنا ومناهجنا؟"
+            elif "شغل" in q or "ترتيب" in q or "وضع" in q or "شو اخبار" in q:
+                reply = "الأمور تمام التمام وكل الدورات والبرامج التعليمية متوفرة وجاهزة لتسجيل الطلاب، تفضل باختيار أي قسم بالأعلى لمعرفة تفاصيله!"
+            elif "سعر" in q or "تكلفة" in q or "قسط" in q or "رسوم" in q:
+                reply = "يسعدنا انضمامك إلينا! يرجى التواصل مباشرة مع إدارة المعهد لمعرفة الرسوم والتفاصيل المالية الخاصة بكل كورس."
+            elif "موقع" in q or "عنوان" in q or "وين" in q:
+                reply = "معهد العمران يرحب بك دائماً، يمكنك زيارتنا في مقر المعهد أو مراسلتنا هنا لأي استفسار أكاديمي."
+            else:
+                reply = f"أهلاً بك في معهد العمران! لقد تلقينا استفسارك ( {user_text} )، ونؤكد لك أن جميع برامجنا وأقسامنا متاحة ويمكنك الضغط عليها بالأعلى للاطلاع على تفاصيلها الكاملة."
 
             chat.controls.append(ft.Text(f"إدارة المعهد: {reply}", size=12, color="#880E4F", weight="bold"))
             page.update()
