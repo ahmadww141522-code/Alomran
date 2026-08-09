@@ -1,11 +1,10 @@
 import flet as ft
 from openai import OpenAI
 
-# ====================== ضع مفتاح xAI هنا ======================
+# ====================== ضع مفتاح Groq هنا ======================
 client = OpenAI(
-    api_key="gsk_bKj3W5Yl6t8R7pQ2mN9vL4xZ1sF0hD6gJ3kH5fC8bV1n"
-,
-    base_url="https://api.x.ai/v1",
+    api_key="gsk_bKj3W5Yl6t8R7pQ2mN9vL4xZ1sF0hD6gJ3kH5fC8bV1n",
+    base_url="https://api.groq.com/openai/v1",
 )
 # =============================================================
 
@@ -14,6 +13,7 @@ def main(page: ft.Page):
     page.padding = 0
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
+    page.scroll = ft.ScrollMode.ALWAYS  # ← حل مشكلة الكيبورد
 
     page.window_width = 380
     page.window_height = 780
@@ -72,31 +72,29 @@ def main(page: ft.Page):
         ]
     }
 
-    # ====== منطقة الشرح الثابتة (تظهر تحت التبويبات) ======
+    # ====== منطقة الشرح الثابتة ======
     display_column = ft.Column([], alignment=ft.MainAxisAlignment.START)
     display_container = ft.Container(
         content=display_column,
         padding=10,
         bgcolor="#FCE4EC",
         border_radius=15,
-        visible=False,  # ← مخفية في البداية
+        visible=False,
     )
 
     def clicked(e):
         title = e.control.data
         data = sections_data.get(title)
 
-        # إذا كان الشرح ظاهر لنفس التبويب، نخفيه
         if display_container.visible and display_column.controls and display_column.controls[0].value == title:
             display_container.visible = False
             display_column.controls.clear()
             page.update()
             return
 
-        # وإلا نعرض الشرح الجديد
         display_column.controls.clear()
         if data:
-            display_column.controls.append(ft.Text(title, size=14, weight=ft.FontWeight.BOLD, color="#880E4F"))  # عنوان التبويب
+            display_column.controls.append(ft.Text(title, size=14, weight=ft.FontWeight.BOLD, color="#880E4F"))
             for line in data:
                 is_title = "منهج" in line or "برنامج" in line
                 display_column.controls.append(
@@ -131,14 +129,16 @@ def main(page: ft.Page):
 
     grid_container = ft.Container(content=ft.Column(rows, spacing=6), padding=5)
 
-    # ========== الشات التفاعلي (منطقة ثابتة تحت الشرح) ==========
+    # ========== الشات التفاعلي ==========
     chat = ft.ListView(expand=True, spacing=8, padding=10, auto_scroll=True)
+    
+    # ====== حل مشكلة الكيبورد ======
     field = ft.TextField(
         hint_text="اكتب استفسارك هنا للإدارة...",
         expand=True,
         border_radius=10,
         text_size=13,
-        on_submit=lambda e: send(e)
+        on_submit=lambda e: send(e),
     )
 
     def send(e):
@@ -158,7 +158,7 @@ def main(page: ft.Page):
             sections_info = "\n".join([f"- {k}: {v[1]}" for k, v in sections_data.items()])
 
             completion = client.chat.completions.create(
-                model="grok-3",
+                model="llama-3.3-70b-versatile",
                 messages=[
                     {
                         "role": "system",
@@ -224,7 +224,7 @@ def main(page: ft.Page):
     content_area = ft.Column([
         header,
         grid_container,
-        display_container,  # ← منطقة الشرح الثابتة (تظهر وتختفي)
+        display_container,
         ft.Container(content=chat, expand=True, padding=5, bgcolor="#FAFAFA", border_radius=10),
         ft.Row([field, send_btn], spacing=8)
     ], expand=True, spacing=6)
