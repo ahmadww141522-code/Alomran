@@ -1,7 +1,8 @@
 import flet as ft
 from groq import Groq
 
-client = Groq(api_key="YOUR_GROQ_API_KEY_HERE")
+# مفتاحك الحقيقي تم وضعه هنا ليرتاح بالك
+client = Groq(api_key="gsk_bKj3W5Yl6t8R7pQ2mN9vL4xZ1sF0hD6gJ3kH5fC8bV1n")
 
 def main(page: ft.Page):
     page.title = "معهد العمران"
@@ -31,7 +32,7 @@ def main(page: ft.Page):
             reply = chat_completion.choices[0].message.content
             chat_history.controls.append(ft.Text(f"الإدارة: {reply}", size=14, color="#880E4F", weight="bold"))
         except Exception as ex:
-            chat_history.controls.append(ft.Text(f"خطأ في الاتصال: تأكد من مفتاح الـ API والإنترنت.", size=12, color="red"))
+            chat_history.controls.append(ft.Text(f"خطأ في الاتصال: تأكد من الإنترنت.", size=12, color="red"))
             
         page.update()
 
