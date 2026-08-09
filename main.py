@@ -3,7 +3,7 @@ from openai import OpenAI
 
 # ====================== ضع مفتاح Groq هنا ======================
 client = OpenAI(
-    api_key="gsk_bKj3W5Yl6t8R7pQ2mN9vL4xZ1sF0hD6gJ3kH5fC8bV1n",
+    api_key="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",
     base_url="https://api.groq.com/openai/v1",
 )
 # =============================================================
