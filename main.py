@@ -3,50 +3,155 @@ from openai import OpenAI
 
 # ====================== ضع مفتاح xAI هنا ======================
 client = OpenAI(
-    api_key="ضع_مفتاح_xAI_هنا",          # ← غيّر هذا السطر بمفتاح xAI الحقيقي
+    api_key="ضع_مفتاح_xAI_هنا",          # ← غيّر هذا السطر
     base_url="https://api.x.ai/v1",
 )
 # =============================================================
 
 def main(page: ft.Page):
-    page.title = "معهد العمران - النظام الشامل"
-    page.rtl = True
+    page.title = "معهد العمران - Al-Omran Institute"
+    page.padding = 0
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.padding = 10
+    page.rtl = True
 
-    # ========== تبويبة الدردشة ==========
-    chat_history = ft.ListView(expand=True, spacing=10, padding=10, auto_scroll=True)
-    
-    user_input = ft.TextField(
-        hint_text="اسأل إدارة معهد العمران...",
-        expand=True,
-        border_radius=10,
-        text_align=ft.TextAlign.RIGHT,
-        on_submit=lambda e: send_click(e)
+    sections_data = {
+        "الحروف والكتابة | Letters & Writing 📚": [
+            "منهج الحروف والكتابة (الأطفال والأساسيات)",
+            "• النظرة العامة: برنامج تأسيسي متكامل يهدف إلى بناء قاعدة صلبة وواضحة في القراءة والكتابة السليمة.",
+            "• التفاصيل: يركز المنهج على تدريب الطفل على مخارج الحروف الصحيحة، وعمل ربط بصري وسمعي بين شكل الحرف وصوته، مع تدريبات مكثفة على مسكة القلم."
+        ],
+        "الرسم الفني | Fine Arts 🎨": [
+            "منهج الرسم الفني والتعبير البصري",
+            "• النظرة العامة: مساحة إبداعية لتطوير الذائقة الفنية وصقل المواهب الكامنة.",
+            "• التفاصيل: يعتمد البرنامج على دراسة أساسيات دمج الألوان، فهم درجات الظل والضوء، ونظريات التكوين الفني باستخدام خامات متعددة."
+        ],
+        "تصميم الأزياء | Fashion Design 👗": [
+            "منهج تصميم الأزياء وعالم الموضة",
+            "• النظرة العامة: كورس احترافي مبسط لعشاق الفن والابتكار في عالم الألبسة.",
+            "• التفاصيل: يتناول الكورس دراسة خطوط الموضة، رسم الباترونات المسطحة، وتنسيق الألوان والأقمشة لتحويل الأفكار إلى قطع أزياء حقيقية."
+        ],
+        "تصميم مجوهرات | Jewelry Design 💍": [
+            "منهج تصميم الإكسسوارات والمجوهرات",
+            "• النظرة العامة: فن دقيق يدمج بين الأصالة والابتكار لصناعة قطع فريدة ومميزة.",
+            "• التفاصيل: يتعلم الطالب أساسيات تصميم الحلي، دراسة توازن الأشكال، دمج الخامات، والأسس النظرية للتصميم الهندسي الفاخر."
+        ],
+        "الأنشطة والكروشيه | Crafts & Crochet 🧶": [
+            "منهج الأنشطة والمهارات اليدوية",
+            "• النظرة العامة: تدريبات عملية وذهنية تهدف لتنمية التنسيق الدقيق والمهارات الحركية.",
+            "• التفاصيل: يركز المنهج على تعلم غرز الكروشيه، قراءة الباترون اليدوي، وإنتاج مشغولات نافذة تعزز التركيز والصبر."
+        ],
+        "فنون الميك أب | Makeup Art 💄": [
+            "منهج فنون التجميل والعناية الشخصية",
+            "• النظرة العامة: كورس تجميلي شامل يغطي أصول المكياج الاحترافي والعناية الذاتية.",
+            "• التفاصيل: يشمل دراسة أنواع البشرة، نظريات الألوان، تحديد شكل الوجه، وتقنيات المكياج (النهاري والسهرة) بمعايير احترافية."
+        ],
+        "تعديل السلوك | Behavior Modification ☀️": [
+            "برنامج تعديل السلوك والإرشاد التربوي",
+            "• النظرة العامة: برنامج إرشادي علمي لبناء عادات حياتية إيجابية ومستقرة.",
+            "• التفاصيل: يعتمد على نظريات نفسية لفهم السلوكيات وتعديلها بالتعزيز الإيجابي، إدارة الغضب، وتعزيز الثقة بالنفس."
+        ],
+        "تحسين النطق | Speech Improvement 🗣️": [
+            "برنامج تحسين النطق والتواصل اللفظي",
+            "• النظرة العامة: جلسات لمعالجة عيوب النطق ومخارج الحروف وتحقيق الطلاقة.",
+            "• التفاصيل: يرتكز على تقييم مخارج الأصوات، تقوية عضلات اللسان، وتمارين التنفس لعلاج التلعثم والتحدث بوضوح."
+        ],
+        "الحساب الذهني | Mental Math 🔢": [
+            "منهج الحساب الذهني وتطوير الذكاء",
+            "• النظرة العامة: برنامج لتنشيط فصوص الدماغ والسرعة الفائقة في العمليات الحسابية.",
+            "• التفاصيل: يعتمد على تقنيات الذاكرة البصرية والعد التخيلي لحل المسائل المعقدة بسرعة تفوق الآلة الحاسبة."
+        ],
+        "المتابعة المدرسية | School Follow-up 📖": [
+            "برنامج المتابعة المدرسية الأكاديمية",
+            "• النظرة العامة: مرافقة تعليمية يومية لضمان التفوق الدراسي وحل المعضلات.",
+            "• التفاصيل: إشراف على مراجعة الدروس، المساعدة في الواجبات، وتبسيط المواد العلمية المعقدة لضمان أعلى الدرجات."
+        ]
+    }
+
+    display_column = ft.Column([], alignment=ft.MainAxisAlignment.START)
+    display_container = ft.Container(
+        content=display_column,
+        padding=15,
+        bgcolor="#FCE4EC",
+        border_radius=15
     )
 
-    def send_click(e):
-        if not user_input.value or not user_input.value.strip():
+    def clicked(e):
+        data = sections_data.get(e.control.data)
+        display_column.controls.clear()
+        if data:
+            for line in data:
+                is_title = "منهج" in line or "برنامج" in line
+                display_column.controls.append(
+                    ft.Text(
+                        line,
+                        size=15 if is_title else 14,
+                        weight=ft.FontWeight.BOLD if is_title else ft.FontWeight.NORMAL,
+                        color="#880E4F"
+                    )
+                )
+        page.update()
+
+    items = list(sections_data.keys())
+    rows = []
+    for i in range(0, len(items), 2):
+        row_items = items[i:i+2]
+        row_controls = []
+        for title in row_items:
+            row_controls.append(
+                ft.Container(
+                    content=ft.Text(title, size=16, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
+                    bgcolor="#FFF0F5",
+                    border_radius=15,
+                    padding=15,
+                    expand=True,
+                    on_click=clicked,
+                    data=title
+                )
+            )
+        rows.append(ft.Row(row_controls, spacing=10))
+
+    grid_container = ft.Container(content=ft.Column(rows, spacing=10), padding=5)
+
+    # ========== الشات التفاعلي ==========
+    chat = ft.ListView(expand=True, spacing=8, padding=10, auto_scroll=True)
+    field = ft.TextField(
+        hint_text="اكتب استفسارك هنا للإدارة...",
+        expand=True,
+        border_radius=10,
+        text_size=13,
+        on_submit=lambda e: send(e)
+    )
+
+    def send(e):
+        if not field.value or not field.value.strip():
             return
 
-        user_text = user_input.value.strip()
-        chat_history.controls.append(
-            ft.Text(f"أنت: {user_text}", size=14, color="#555555", text_align=ft.TextAlign.RIGHT)
-        )
-        user_input.value = ""
+        user_text = field.value.strip()
+        chat.controls.append(ft.Text(f"أنت: {user_text}", size=13, color="#555555"))
+        field.value = ""
         page.update()
 
         thinking = ft.Text("الإدارة عم تفكر...", size=12, color="grey", italic=True)
-        chat_history.controls.append(thinking)
+        chat.controls.append(thinking)
         page.update()
 
         try:
+            # نجهز معلومات الأقسام عشان Grok يعرف يرد عنها
+            sections_info = "\n".join([f"- {k}: {v[1]}" for k, v in sections_data.items()])
+
             completion = client.chat.completions.create(
                 model="grok-3",
                 messages=[
                     {
                         "role": "system",
-                        "content": "أنت المساعد الرسمي لمعهد العمران. ردودك مهنية وواضحة ومفيدة للطلاب والأساتذة. جاوب دائماً بالعربية الفصحى المبسطة."
+                        "content": f"""أنت المساعد الرسمي لمعهد العمران.
+ردودك مهنية، واضحة، ومفيدة للأهالي والطلاب.
+جاوب دائماً بالعربية الفصحى المبسطة.
+هذه هي الأقسام المتوفرة في المعهد:
+{sections_info}
+
+إذا سأل عن قسم معين، أعطِ تفاصيل مفيدة.
+إذا السؤال عام، رحب به ووجهه للأقسام المناسبة."""
                     },
                     {"role": "user", "content": user_text}
                 ],
@@ -54,126 +159,55 @@ def main(page: ft.Page):
             )
             reply = completion.choices[0].message.content
 
-            chat_history.controls.remove(thinking)
-            chat_history.controls.append(
-                ft.Text(f"الإدارة: {reply}", size=14, color="#880E4F", weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.RIGHT)
+            chat.controls.remove(thinking)
+            chat.controls.append(
+                ft.Text(f"إدارة المعهد: {reply}", size=13, color="#880E4F", weight=ft.FontWeight.BOLD)
             )
         except Exception as ex:
-            chat_history.controls.remove(thinking)
-            chat_history.controls.append(
-                ft.Text(f"خطأ في الاتصال: تأكد من الإنترنت أو المفتاح", size=12, color="red")
+            chat.controls.remove(thinking)
+            chat.controls.append(
+                ft.Text("خطأ في الاتصال. تأكد من الإنترنت أو المفتاح.", size=12, color="red")
             )
 
         page.update()
 
-    chat_tab = ft.Column(
-        [
-            chat_history,
-            ft.Row(
-                [
-                    user_input,
-                    ft.ElevatedButton(
-                        "إرسال",
-                        icon=ft.Icons.SEND,
-                        on_click=send_click,
-                        bgcolor="#880E4F",
-                        color="white"
-                    )
-                ],
-                spacing=10
-            )
-        ],
-        expand=True
-    )
+    send_btn = ft.ElevatedButton("إرسال", on_click=send, bgcolor="#880E4F", color="white")
 
-    # ========== تبويبة الأقسام والمناهج ==========
-    courses_tab = ft.ListView(
-        [
-            ft.Card(
-                content=ft.Container(
-                    content=ft.Column([
-                        ft.Row([
-                            ft.Icon(ft.Icons.ENGINEERING, color="#0D47A1"),
-                            ft.Text("هندسة الميكاترونكس والكهرباء", weight=ft.FontWeight.BOLD, size=16, color="#0D47A1")
-                        ]),
-                        ft.Text("دورات احترافية عملية ونظرية تغطي كافة الأساسيات والتطبيقات الهندسية والمشاريع المتقدمة.", size=13, color="#444444")
-                    ]),
-                    padding=15
-                )
-            ),
-            ft.Card(
-                content=ft.Container(
-                    content=ft.Column([
-                        ft.Row([
-                            ft.Icon(ft.Icons.SMART_TOY, color="#0D47A1"),
-                            ft.Text("التسويق باستخدام الذكاء الاصطناعي", weight=ft.FontWeight.BOLD, size=16, color="#0D47A1")
-                        ]),
-                        ft.Text("كورس متكامل لتدريب الطلاب على أحدث أدوات الذكاء الاصطناعي في التسويق وبناء الحملات الرقمية.", size=13, color="#444444")
-                    ]),
-                    padding=15
-                )
-            ),
-            ft.Card(
-                content=ft.Container(
-                    content=ft.Column([
-                        ft.Row([
-                            ft.Icon(ft.Icons.CODE, color="#0D47A1"),
-                            ft.Text("برمجة بايثون", weight=ft.FontWeight.BOLD, size=16, color="#0D47A1")
-                        ]),
-                        ft.Text("منهج مخصص للانتقال من الصفر وحتى الاحتراف البرمجي وتطوير التطبيقات.", size=13, color="#444444")
-                    ]),
-                    padding=15
-                )
-            ),
-        ],
-        expand=True,
-        spacing=10,
-        padding=10
-    )
-
-    # ========== تبويبة عن المعهد ==========
-    about_tab = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row([
-                    ft.Icon(ft.Icons.INFO, color="#0D47A1"),
-                    ft.Text("عن معهد العمران", size=18, weight=ft.FontWeight.BOLD, color="#0D47A1")
-                ]),
-                ft.Text("معهد خاص رائد يهدف إلى تقديم أحدث العلوم الهندسية وبرامج الذكاء الاصطناعي بخبرات احترافية عالية.", size=14, color="#333333"),
-                ft.Divider(),
-                ft.Text("إشراف هندسي وتعليمي متطور لخدمة الطلاب والمتدربين نحو المستقبل.", size=13, color="#666666")
-            ],
-            spacing=10
-        ),
-        padding=15
-    )
-
-    # ========== التبويبات ==========
-    tabs = ft.Tabs(
-        selected_index=0,
-        animation_duration=300,
-        expand=True,
-        tabs=[
-            ft.Tab(label="الدردشة الذكية", content=chat_tab, icon=ft.Icons.CHAT),
-            ft.Tab(label="الأقسام والمناهج", content=courses_tab, icon=ft.Icons.BOOK),
-            ft.Tab(label="عن المعهد", content=about_tab, icon=ft.Icons.INFO),
-        ],
-    )
-
-    # ========== الرأس ==========
+    # ========== الهيدر ==========
     header = ft.Container(
-        content=ft.Row(
-            [
-                ft.Icon(ft.Icons.SCHOOL, color="white"),
-                ft.Text("معهد العمران - النظام الشامل", size=18, weight=ft.FontWeight.BOLD, color="white")
-            ],
-            alignment=ft.MainAxisAlignment.CENTER
-        ),
-        bgcolor="#0D47A1",
-        padding=15,
-        border_radius=10,
+        content=ft.Stack([
+            ft.Image(
+                src="icon.png",
+                width=float("inf"),
+                height=180,
+                fit=ft.ImageFit.COVER,
+                repeat=ft.ImageRepeat.NO_REPEAT
+            ),
+            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=180),
+            ft.Column([
+                ft.Row([
+                    ft.Text("معهد العمران", size=26, weight=ft.FontWeight.BOLD, color="black"),
+                    ft.Text(" | ", color="black", size=24),
+                    ft.Text("Al-Omran Institute", size=22, weight=ft.FontWeight.BOLD, color="black")
+                ], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=14, color="black", weight=ft.FontWeight.BOLD)
+            ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        ]),
+        height=180,
+        border_radius=20,
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        width=float("inf")
     )
 
-    page.add(header, tabs)
+    content_area = ft.Column([
+        header,
+        grid_container,
+        display_container,
+        ft.Divider(height=5),
+        ft.Container(content=chat, height=120, padding=5, bgcolor="#FAFAFA", border_radius=10),
+        ft.Row([field, send_btn], spacing=8)
+    ], expand=True, spacing=8)
+
+    page.add(content_area)
 
 ft.app(target=main)
