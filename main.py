@@ -3,7 +3,8 @@ from openai import OpenAI
 
 # ====================== ضع مفتاح xAI هنا ======================
 client = OpenAI(
-    api_key="ضع_مفتاح_xAI_هنا",          # ← غيّر هذا السطر
+    api_key="gsk_bKj3W5Yl6t8R7pQ2mN9vL4xZ1sF0hD6gJ3kH5fC8bV1n"
+,
     base_url="https://api.x.ai/v1",
 )
 # =============================================================
@@ -13,8 +14,7 @@ def main(page: ft.Page):
     page.padding = 0
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
-    
-    # ====== إعدادات حجم النافذة للجوال ======
+
     page.window_width = 380
     page.window_height = 780
     page.window_resizable = False
@@ -72,28 +72,42 @@ def main(page: ft.Page):
         ]
     }
 
+    # ====== منطقة الشرح الثابتة (تظهر تحت التبويبات) ======
     display_column = ft.Column([], alignment=ft.MainAxisAlignment.START)
     display_container = ft.Container(
         content=display_column,
-        padding=15,
+        padding=10,
         bgcolor="#FCE4EC",
-        border_radius=15
+        border_radius=15,
+        visible=False,  # ← مخفية في البداية
     )
 
     def clicked(e):
-        data = sections_data.get(e.control.data)
+        title = e.control.data
+        data = sections_data.get(title)
+
+        # إذا كان الشرح ظاهر لنفس التبويب، نخفيه
+        if display_container.visible and display_column.controls and display_column.controls[0].value == title:
+            display_container.visible = False
+            display_column.controls.clear()
+            page.update()
+            return
+
+        # وإلا نعرض الشرح الجديد
         display_column.controls.clear()
         if data:
+            display_column.controls.append(ft.Text(title, size=14, weight=ft.FontWeight.BOLD, color="#880E4F"))  # عنوان التبويب
             for line in data:
                 is_title = "منهج" in line or "برنامج" in line
                 display_column.controls.append(
                     ft.Text(
                         line,
-                        size=15 if is_title else 14,
+                        size=14 if is_title else 13,
                         weight=ft.FontWeight.BOLD if is_title else ft.FontWeight.NORMAL,
                         color="#880E4F"
                     )
                 )
+        display_container.visible = True
         page.update()
 
     items = list(sections_data.keys())
@@ -104,20 +118,20 @@ def main(page: ft.Page):
         for title in row_items:
             row_controls.append(
                 ft.Container(
-                    content=ft.Text(title, size=16, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
+                    content=ft.Text(title, size=13, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
                     bgcolor="#FFF0F5",
-                    border_radius=15,
-                    padding=15,
+                    border_radius=12,
+                    padding=10,
                     expand=True,
                     on_click=clicked,
                     data=title
                 )
             )
-        rows.append(ft.Row(row_controls, spacing=10))
+        rows.append(ft.Row(row_controls, spacing=8))
 
-    grid_container = ft.Container(content=ft.Column(rows, spacing=10), padding=5)
+    grid_container = ft.Container(content=ft.Column(rows, spacing=6), padding=5)
 
-    # ========== الشات التفاعلي ==========
+    # ========== الشات التفاعلي (منطقة ثابتة تحت الشرح) ==========
     chat = ft.ListView(expand=True, spacing=8, padding=10, auto_scroll=True)
     field = ft.TextField(
         hint_text="اكتب استفسارك هنا للإدارة...",
@@ -186,33 +200,34 @@ def main(page: ft.Page):
             ft.Image(
                 src="icon.png",
                 width=float("inf"),
-                height=180,
+                height=160,
                 fit="cover",
                 repeat=ft.ImageRepeat.NO_REPEAT
             ),
-            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=180),
+            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=160),
             ft.Column([
                 ft.Row([
-                    ft.Text("معهد العمران", size=26, weight=ft.FontWeight.BOLD, color="black"),
-                    ft.Text(" | ", color="black", size=24),
-                    ft.Text("Al-Omran Institute", size=22, weight=ft.FontWeight.BOLD, color="black")
+                    ft.Text("معهد العمران", size=22, weight=ft.FontWeight.BOLD, color="black"),
+                    ft.Text(" | ", color="black", size=20),
+                    ft.Text("Al-Omran Institute", size=18, weight=ft.FontWeight.BOLD, color="black")
                 ], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=14, color="black", weight=ft.FontWeight.BOLD)
+                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=12, color="black", weight=ft.FontWeight.BOLD)
             ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         ]),
-        height=180,
+        height=160,
         border_radius=20,
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
         width=float("inf")
     )
 
+    # ====== ترتيب العناصر ======
     content_area = ft.Column([
         header,
         grid_container,
-        display_container,
+        display_container,  # ← منطقة الشرح الثابتة (تظهر وتختفي)
         ft.Container(content=chat, expand=True, padding=5, bgcolor="#FAFAFA", border_radius=10),
         ft.Row([field, send_btn], spacing=8)
-    ], expand=True, spacing=8)
+    ], expand=True, spacing=6)
 
     page.add(content_area)
 
