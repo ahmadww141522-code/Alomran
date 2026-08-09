@@ -110,29 +110,21 @@ def main(page: ft.Page):
 
     send_btn = ft.ElevatedButton("إرسال", on_click=send)
 
-    # الهيدر النهائي: اللوجو يملأ الخلفية بالكامل وعليها أزرق غامق فخم والنصوص سوداء واضحة
+    # الهيدر المعدل لمنع التجمد وتفعيل اللمس تماماً على الموبايل
     header = ft.Container(
-        content=ft.Stack([
-            ft.Image(
-                src="icon.png", 
-                width=float("inf"),
-                height=180,
-                repeat=ft.ImageRepeat.REPEAT
-            ),
-            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=180),
-            ft.Column([
-                ft.Row([
-                    ft.Text("معهد العمران", size=26, weight="bold", color="black"),
-                    ft.Text(" | ", color="black", size=24),
-                    ft.Text("Al-Omran Institute", size=24, weight="bold", color="black")
-                ], alignment="center"),
-                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=14, color="black", weight="bold")
-            ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
-        ]),
+        content=ft.Column([
+            ft.Row([
+                ft.Image(src="icon.png", width=40, height=40),
+                ft.Text("معهد العمران", size=22, weight="bold", color="white"),
+                ft.Text(" | ", color="white", size=20),
+                ft.Text("Al-Omran", size=20, weight="bold", color="white")
+            ], alignment="center"),
+            ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=13, color="#FFEB3B", weight="bold")
+        ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
         bgcolor="#0D47A1",
-        height=180,
+        height=140,
         border_radius=20,
-        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        padding=10,
         width=float("inf")
     )
 
@@ -143,7 +135,7 @@ def main(page: ft.Page):
         ft.Divider(height=5),
         ft.Container(content=chat, height=90, padding=5, bgcolor="#FAFAFA", border_radius=10),
         ft.Row([field, send_btn], spacing=8)
-    ], expand=True, spacing=8)
+    ], expand=True, spacing=8, scroll=ft.ScrollMode.AUTO)
 
     page.add(content_area)
 
