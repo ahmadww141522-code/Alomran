@@ -102,15 +102,15 @@ def main(page: ft.Page):
                     content=ft.Text(title, size=15, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
                     bgcolor="#FFF0F5",
                     border_radius=15,
-                    padding=12,
+                    padding=14,
                     expand=True,
                     on_click=clicked,
                     data=title
                 )
             )
-        rows.append(ft.Row(row_controls, spacing=8))
+        rows.append(ft.Row(row_controls, spacing=10))
 
-    grid_container = ft.Container(content=ft.Column(rows, spacing=8), padding=5)
+    grid_container = ft.Container(content=ft.Column(rows, spacing=10), padding=5)
 
     # ========== الشات التفاعلي ==========
     chat = ft.ListView(expand=True, spacing=8, padding=10, auto_scroll=True)
@@ -196,18 +196,19 @@ def main(page: ft.Page):
             ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         ]),
         height=160,
-        border_radius=16,
+        border_radius=18,
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
         width=float("inf")
     )
 
+    # ========== المحتوى الكامل ==========
     content_area = ft.Column(
         [
             header,
             grid_container,
             display_container,
             ft.Divider(height=10),
-            ft.Text("الدردشة مع الإدارة", size=15, weight=ft.FontWeight.BOLD, color="#880E4F"),
+            ft.Text("💬 الدردشة مع الإدارة", size=15, weight=ft.FontWeight.BOLD, color="#880E4F"),
             ft.Container(
                 content=chat,
                 height=180,
@@ -219,7 +220,7 @@ def main(page: ft.Page):
             ft.Row([field, send_btn], spacing=8)
         ],
         expand=True,
-        spacing=8,
+        spacing=10,
         scroll=ft.ScrollMode.AUTO
     )
 
