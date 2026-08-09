@@ -10,7 +10,7 @@ client = OpenAI(
 
 def main(page: ft.Page):
     page.title = "معهد العمران - Al-Omran Institute"
-    page.padding = 10
+    page.padding = 0
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
 
@@ -99,10 +99,10 @@ def main(page: ft.Page):
         for title in row_items:
             row_controls.append(
                 ft.Container(
-                    content=ft.Text(title, size=15, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
+                    content=ft.Text(title, size=16, weight=ft.FontWeight.BOLD, color="#880E4F", text_align=ft.TextAlign.CENTER),
                     bgcolor="#FFF0F5",
                     border_radius=15,
-                    padding=14,
+                    padding=15,
                     expand=True,
                     on_click=clicked,
                     data=title
@@ -118,7 +118,7 @@ def main(page: ft.Page):
         hint_text="اكتب استفسارك هنا للإدارة...",
         expand=True,
         border_radius=10,
-        text_size=14,
+        text_size=13,
         on_submit=lambda e: send(e)
     )
 
@@ -181,48 +181,34 @@ def main(page: ft.Page):
             ft.Image(
                 src="icon.png",
                 width=float("inf"),
-                height=160,
+                height=180,
                 fit="cover",
                 repeat=ft.ImageRepeat.NO_REPEAT
             ),
-            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=160),
+            ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=180),
             ft.Column([
                 ft.Row([
-                    ft.Text("معهد العمران", size=24, weight=ft.FontWeight.BOLD, color="black"),
-                    ft.Text(" | ", color="black", size=22),
-                    ft.Text("Al-Omran Institute", size=20, weight=ft.FontWeight.BOLD, color="black")
+                    ft.Text("معهد العمران", size=26, weight=ft.FontWeight.BOLD, color="black"),
+                    ft.Text(" | ", color="black", size=24),
+                    ft.Text("Al-Omran Institute", size=22, weight=ft.FontWeight.BOLD, color="black")
                 ], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=13, color="black", weight=ft.FontWeight.BOLD)
+                ft.Text("الدليل الشامل للدورات والخدمات التعليمية للأهالي", size=14, color="black", weight=ft.FontWeight.BOLD)
             ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         ]),
-        height=160,
-        border_radius=18,
+        height=180,
+        border_radius=20,
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
         width=float("inf")
     )
 
-    # ========== المحتوى الكامل ==========
-    content_area = ft.Column(
-        [
-            header,
-            grid_container,
-            display_container,
-            ft.Divider(height=10),
-            ft.Text("💬 الدردشة مع الإدارة", size=15, weight=ft.FontWeight.BOLD, color="#880E4F"),
-            ft.Container(
-                content=chat,
-                height=180,
-                padding=10,
-                bgcolor="#FAFAFA",
-                border_radius=12,
-                border=ft.border.all(1, "#E0E0E0")
-            ),
-            ft.Row([field, send_btn], spacing=8)
-        ],
-        expand=True,
-        spacing=10,
-        scroll=ft.ScrollMode.AUTO
-    )
+    content_area = ft.Column([
+        header,
+        grid_container,
+        display_container,
+        ft.Divider(height=5),
+        ft.Container(content=chat, height=120, padding=5, bgcolor="#FAFAFA", border_radius=10),
+        ft.Row([field, send_btn], spacing=8)
+    ], expand=True, spacing=8)
 
     page.add(content_area)
 
