@@ -1,0 +1,6 @@
+product: "AlOmran"
+description: "AlOmran Institute App"
+org: "com.alomran.institute"
+android:
+  package_id: "com.alomran.institute"
+  icon: "icon.png"
