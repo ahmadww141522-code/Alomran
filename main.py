@@ -136,7 +136,6 @@ def main(page: ft.Page):
         page.update()
 
         try:
-            # نجهز معلومات الأقسام عشان Grok يعرف يرد عنها
             sections_info = "\n".join([f"- {k}: {v[1]}" for k, v in sections_data.items()])
 
             completion = client.chat.completions.create(
@@ -159,12 +158,15 @@ def main(page: ft.Page):
             )
             reply = completion.choices[0].message.content
 
-            chat.controls.remove(thinking)
+            if thinking in chat.controls:
+                chat.controls.remove(thinking)
+
             chat.controls.append(
                 ft.Text(f"إدارة المعهد: {reply}", size=13, color="#880E4F", weight=ft.FontWeight.BOLD)
             )
         except Exception as ex:
-            chat.controls.remove(thinking)
+            if thinking in chat.controls:
+                chat.controls.remove(thinking)
             chat.controls.append(
                 ft.Text("خطأ في الاتصال. تأكد من الإنترنت أو المفتاح.", size=12, color="red")
             )
@@ -180,7 +182,7 @@ def main(page: ft.Page):
                 src="icon.png",
                 width=float("inf"),
                 height=180,
-                fit=ft.ImageFit.COVER,
+                fit="cover",
                 repeat=ft.ImageRepeat.NO_REPEAT
             ),
             ft.Container(bgcolor="#E1F5FE", opacity=0.88, width=float("inf"), height=180),
