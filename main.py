@@ -1,7 +1,6 @@
 import flet as ft
 from groq import Groq
 
-# ضع مفتاحك الخاص هنا بين الإشارات التنصيص
 client = Groq(api_key="YOUR_GROQ_API_KEY_HERE")
 
 def main(page: ft.Page):
@@ -22,7 +21,6 @@ def main(page: ft.Page):
         page.update()
         
         try:
-            # الاتصال بذكاء Groq والحصول على الرد الحقيقي
             chat_completion = client.chat.completions.create(
                 messages=[
                     {"role": "system", "content": "أنت مساعد ذكي لإدارة معهد العمران، ردودك مهنية، قصيرة، ومباشرة."},
@@ -42,8 +40,7 @@ def main(page: ft.Page):
             content=ft.Text("معهد العمران - مساعد الذكاء الاصطناعي", size=20, weight="bold", color="white"), 
             bgcolor="#0D47A1", 
             padding=20, 
-            border_radius=15, 
-            alignment=ft.alignment.center
+            border_radius=15
         ),
         chat_history,
         ft.Row([user_input, ft.ElevatedButton("إرسال", on_click=send_click, bgcolor="#880E4F", color="white")])
